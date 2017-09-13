@@ -12,10 +12,21 @@ class Token
 
     protected function expiresAt()
     {
-        return null;
+        $lasts = $this->lastsFor();
+
+        if ($lasts === 0) {
+            return null;
+        }
+
+        return Carbon::now()->addMinutes($lasts);
     }
 
-    private function buildData()
+    protected function lastsFor()
+    {
+        return 0;
+    }
+
+    private function buildData() : array
     {
         return [
             'expires' => optional($this->expiresAt())->getTimestamp() ?? false,
@@ -23,12 +34,12 @@ class Token
         ];
     }
 
-    public function __toString()
+    final public function __toString()
     {
         return Crypt::encryptString(json_encode($this->buildData()));
     }
 
-    public static function fromToken($token)
+    final public static function from($token) : Token
     {
         $content = json_decode(Crypt::decryptString($token));
 
@@ -39,7 +50,7 @@ class Token
             }
         }
 
-        return (unserialize($content->data));
+        return unserialize($content->data);
     }
 
     public static function handle($token)

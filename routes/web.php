@@ -18,3 +18,11 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('tokens/{token}', 'TokenController@process')->name('token.process');
+
+Route::get('one-click', function () {
+    $user = App\User::whereEmail(request()->email)->first();
+    $user->notify(new App\Notifications\OneClickSignOn($user));
+    return 'sent';
+});

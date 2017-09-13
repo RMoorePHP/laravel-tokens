@@ -18,8 +18,8 @@ class PasswordReset extends Token
         return $this->user;
     }
 
-    public function expiresAt()
+    public function lastsFor()
     {
-        return Carbon::now()->addMinutes(2);
+        return 2;
     }
 }
